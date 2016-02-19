@@ -1,0 +1,8 @@
+- wrapper:
+    name: jenkins
+    wrappers:
+      - ssh-agent-credentials:
+          users:
+            - '87717344-0c5e-4d89-b8df-e174cec9e8ff'
+
+

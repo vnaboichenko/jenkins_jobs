@@ -1,0 +1,19 @@
+- project:
+    name: build
+    email_to: ''
+    plugin_mirror: http://mirror.ci-cd-aut.local/plugins
+    gerrit-url: https://review.ci-cd-aut.local
+    stable_plugins_urls: ''
+    tag: 'refs/tags/1.0.0'
+    lbaas_test_group: deploy_neutron_lbaas_simple
+    lbaas_plugin_repo: fuel-plugin-neutron-lbaas
+    zabbix_test_group: deploy_zabbix_ha
+    zabbix_plugin_repo: fuel-plugin-external-zabbix
+
+
+
+
+    jobs:
+      - 'fuel-plugin-build-plugin-request'
+      - 'fuel-plugins.publish_plugins'
+      - 'fuel-plugin-system-tests'

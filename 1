@@ -1,0 +1,63 @@
+- job-template:
+    name: 'fuel-plugin-build-plugin'
+    description: '<a href=https://github.com/openstack/{plugin_repo}>Build {plugin_name} plugin from fuel-plugins project when some code was merged</a>'
+    logrotate:
+      numToKeep: 10
+    node: new-builder
+    parameters:
+      - string:
+          name: GERRIT_REFSPEC
+          default: refs/heads/master
+      - string:
+          name: GERRIT_CHANGE_NUMBER
+          default: triggered-manually
+    builders:
+      - shell:
+          !include-raw-escape './builders/build-merge.sh'
+      - inject:
+          properties-file: 'setenvfile'
+      - conditional-step:
+          condition-kind: shell
+          condition-command: |
+            #!/bin/bash -ex
+            [ "${{RESULT}}" == "0" ]
+          on-evaluation-failure: dont-run
+          steps:
+             - trigger-builds:
+                - project: 'fuel-plugins.publish_plugins'
+                  current-parameters: true
+                  property-file: buildresult.params
+                  predefined-parameters: |
+                      STORE_LOGS=false
+                      PUBLISH_PATH=repository
+                      REPORTED_JOB_NAME=$JOB_NAME
+                      REPORTED_JOB_URL=$JOB_URL
+                      REPORTED_BUILD_ID=$BUILD_ID
+                  block: true
+    scm:
+      - git:
+          branches:
+            - $GERRIT_BRANCH
+          name: ''
+          refspec: refs/heads/$GERRIT_BRANCH
+          url: 'https://review.ci-cd-aut.local/openstack/{plugin_repo}'
+          choosing-strategy: default
+    triggers:
+      - gerrit:
+          projects:
+            - project-compare-type: 'PLAIN'
+              project-pattern: 'openstack/{plugin_repo}'
+              branches:
+                - branch-compare-type: 'ANT'
+                  branch-pattern: '**'
+          trigger-on:
+            - change-merged-event
+          readable-message: "True"
+          custom-url: '* $JOB_NAME http://mirror.ci-cd-aut.local/plugins/repository'
+          server-name: 'review.ci-cd-aut.local'
+    publishers:
+      - archive:
+          artifacts: '*.rpm,*.txt'
+      - email:
+          notify-every-unstable-build: "True"
+          recipients: '{email_to}'

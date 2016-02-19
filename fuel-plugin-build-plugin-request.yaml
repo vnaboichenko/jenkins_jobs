@@ -1,0 +1,84 @@
+- job-template:
+    name: 'fuel-plugin-build-plugin-request'
+    description: '<a href=https://github.com/openstack/$GERRIT_PROJECT>Build  plugin from fuel-plugins projec.</a>'
+    logrotate:
+      numToKeep: 10
+    node: new-builder
+    properties:
+      - inject:
+          properties-content: |
+            GERRIT_USER=cicd-ci-jenkins
+            GERRIT_VOTE=1
+    wrappers:
+      -  jenkins
+    parameters:
+      - string:
+          name: GERRIT_REFSPEC
+          default: refs/heads/master
+      - string:
+          name: GERRIT_CHANGE_NUMBER
+          default: triggered-manually
+    builders:
+      - shell:
+          !include-raw-escape builders/mos.reset.vote.sh
+      - shell:
+          !include-raw-escape './builders/build-plugin.sh'
+      - inject:
+          properties-file: 'setenvfile'
+      - conditional-step:
+          condition-kind: shell
+          condition-command: |
+            #!/bin/bash -ex
+            [ "${{RESULT}}" == "0" ]
+          on-evaluation-failure: dont-run
+          steps:
+             - trigger-builds:
+                - project: 'fuel-plugins.publish_plugins'
+                  current-parameters: true
+                  property-file: buildresult.params
+                  predefined-parameters: |
+                      STORE_LOGS=true
+                      PUBLISH_PATH=review/$JOB_NAME/BUILD-$BUILD_ID-CR-$GERRIT_CHANGE_NUMBER
+                      REPORTED_JOB_NAME=$JOB_NAME
+                      REPORTED_JOB_URL=$JOB_URL
+                      REPORTED_BUILD_ID=$BUILD_ID
+                  block: true
+      - trigger-builds:
+        - project: 'fuel-plugin-system-tests'
+          current-parameters: true
+          property-file: setenvfile
+          predefined-parameters: |
+              FUEL_QA_COMMIT=stable/7.0
+              PLUGINS={plugin_mirror}/review/$JOB_NAME/BUILD-$BUILD_ID-CR-$GERRIT_CHANGE_NUMBER/$RPM_NAME
+      - shell:
+          !include-raw-escape builders/mos.vote.sh
+    scm:
+      - git:
+          branches:
+            - $GERRIT_BRANCH
+          name: ''
+          refspec: $GERRIT_REFSPEC
+          url: '{gerrit-url}/$GERRIT_PROJECT'
+          choosing-strategy: gerrit
+    triggers:
+      - gerrit:
+          projects:
+            - project-compare-type: 'ANT'
+              project-pattern: 'fuel-plugin-**'
+              branches:
+                - branch-compare-type: 'ANT'
+                  branch-pattern: '**'
+          trigger-on:
+            - patchset-created-event
+            - comment-added-contains-event:
+                comment-contains-value: 'recheck'
+#          silent: true
+          readable-message: true
+          custom-url: '* $JOB_NAME http://mirror.ci-cd-aut.local/plugins/review/$JOB_NAME/BUILD-$BUILD_ID-CR-$GERRIT_CHANGE_NUMBER'
+          server-name: 'review.ci-cd-aut.local'
+    publishers:
+      - archive:
+          artifacts: '*.rpm,*.txt'
+      - email:
+          notify-every-unstable-build: true
+          recipients: '{email_to}'
