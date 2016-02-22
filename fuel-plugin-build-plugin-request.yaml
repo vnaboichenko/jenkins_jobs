@@ -13,6 +13,9 @@
       -  jenkins
     parameters:
       - string:
+          name: PUBLISH_PATH
+          default: review/$JOB_NAME/BUILD-$BUILD_ID-CR-$GERRIT_CHANGE_NUMBER
+      - string:
           name: GERRIT_REFSPEC
           default: refs/heads/master
       - string:
@@ -38,7 +41,7 @@
                   property-file: buildresult.params
                   predefined-parameters: |
                       STORE_LOGS=true
-                      PUBLISH_PATH=review/$JOB_NAME/BUILD-$BUILD_ID-CR-$GERRIT_CHANGE_NUMBER
+                      PUBLISH_PATH=$PUBLISH_PATH
                       REPORTED_JOB_NAME=$JOB_NAME
                       REPORTED_JOB_URL=$JOB_URL
                       REPORTED_BUILD_ID=$BUILD_ID

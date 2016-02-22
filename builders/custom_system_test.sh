@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -x
 
 TEST_ISO_JOB_URL="https://product-ci.infra.mirantis.net/job/7.0.test_all/"
 
@@ -104,4 +104,12 @@ export OPENSTACK_RELEASE="${OPENSTACK_RELEASE}"
 
 echo "Description string: ${TEST_GROUP} on ${NODE_NAME}: ${ENV_NAME}"
 
-sh -x "utils/jenkins/system_tests.sh" -k -t test -w "${WORKSPACE}" -e $ENV_NAME -V "${VENV_PATH}" -j "${JOB_NAME}" -o --group="${TEST_GROUP}" -i "${ISO_PATH}"
+if sh -x "utils/jenkins/system_tests.sh" -k -t test -w "${WORKSPACE}" -e $ENV_NAME -V "${VENV_PATH}" -j "${JOB_NAME}" -o --group="${TEST_GROUP}" -i ${ISO_PATH}
+then 
+  RESULT=0
+else 
+  RESULT=1
+fi
+
+echo "RESULT=${RESULT}" > setenvfile
+

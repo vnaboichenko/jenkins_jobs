@@ -34,7 +34,20 @@ case "${TEST_GROUP}" in
                 echo "ZABBIX_PLUGIN_PATH=$PLUGINS_DIR/$(get_plugin_path zabbix_monitoring)" > plugins.parameters
                 ;;
         "deploy_neutron_lbaas_simple")
-                echo "LBAAS_PLUGIN_PATH=$PLUGINS_DIR/$(get_plugin_path lbaas)" >> plugins.parameters
+                echo "LBAAS_PLUGIN_PATH=$PLUGINS_DIR/$(get_plugin_path lbaas)" > plugins.parameters
+                ;;
+        "deploy_ldap")
+                echo "LDAP_PLUGIN_PATH=$PLUGINS_DIR/$(get_plugin_path ldap)" > plugins.parameters
+                echo "LDAP_GROUPS_TREE_DN=dc=bud,dc=mirantis,dc=net" >> plugins.parameters
+                echo "LDAP_USER_PASSWORD=password" >> plugins.parameters
+                echo "LDAP_QUERY_SCOPE=sub" >> plugins.parameters
+                echo "LDAP_USER=cn=admin,dc=bud,dc=mirantis,dc=net" >> plugins.parameters
+                echo "LDAP_URL=ldap://172.18.167.70" >> plugins.parameters
+                echo "LDAP_SUFFIX=dc=bud,dc=mirantis,dc=net" >> plugins.parameters
+                echo "LDAP_DOMAIN=bud.mirantis.net" >> plugins.parameters
+                echo "LDAP_USERS_TREE_DN=dc=bud,dc=mirantis,dc=net" >> plugins.parameters
+                echo "LDAP_USER_OBJECT_CLASS=simpleSecurityObject" >> plugins.parameters
+                echo "LDAP_USER_NAME_ATTRIBUTE=cn" >> plugins.parameters
                 ;;
         *)
                 echo "WARNING: Cannot automatically determine *_PLUGIN_PATH variables for ${TEST_GROUP}. Required plugins may not be found." >&2

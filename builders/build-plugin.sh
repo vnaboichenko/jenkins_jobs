@@ -85,6 +85,8 @@ if [[ $RPM_NAME =~ ^lbaas*  ]]; then
     echo 'CUSTOM_TEST_GROUP=deploy_neutron_lbaas_simple' >> setenvfile
   elif [[ $RPM_NAME =~ ^zabbix_monitoring*  ]]; then
     echo 'CUSTOM_TEST_GROUP=deploy_zabbix_ha' >> setenvfile
+  elif [[ $RPM_NAME =~ ^ldap*  ]]; then
+    echo 'CUSTOM_TEST_GROUP=deploy_ldap' >> setenvfile
 fi
 
 cat setenvfile

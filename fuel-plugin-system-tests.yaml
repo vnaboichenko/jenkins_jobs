@@ -7,6 +7,11 @@
       artifactDaysToKeep: 10
       daysToKeep: 30
     node: install-tests
+    properties:
+      - inject:
+          properties-content: |
+            GERRIT_USER=openstack-ci-packtest-deb
+            GERRIT_VOTE=1
     builders:
       - inject:
           properties-content: |
@@ -22,6 +27,8 @@
           properties-file: plugins.parameters
       - shell:
           !include-raw './builders/custom_system_test.sh'
+      - shell:
+          !include-raw-escape builders/mos.vote.sh
     parameters:
       - string:
           name: MAGNET_LINK

@@ -1,10 +1,20 @@
 - job-template:
-    name: 'fuel-plugin-build-plugin'
-    description: '<a href=https://github.com/openstack/{plugin_repo}>Build {plugin_name} plugin from fuel-plugins project when some code was merged</a>'
+    name: 'fuel-plugin-build-plugin-merge'
+    description: '<a href=https://github.com/openstack/$GERRIT_PROJECT>Build  plugin from fuel-plugins projec.</a>'
     logrotate:
       numToKeep: 10
     node: new-builder
+    properties:
+      - inject:
+          properties-content: |
+            GERRIT_USER=cicd-ci-jenkins
+            GERRIT_VOTE=1
+    wrappers:
+      -  jenkins
     parameters:
+      - string:
+          name: PUBLISH_PATCH
+          default: repository
       - string:
           name: GERRIT_REFSPEC
           default: refs/heads/master
@@ -13,7 +23,7 @@
           default: triggered-manually
     builders:
       - shell:
-          !include-raw-escape './builders/build-merge.sh'
+          !include-raw-escape './builders/build-plugin.sh'
       - inject:
           properties-file: 'setenvfile'
       - conditional-step:
@@ -28,36 +38,38 @@
                   current-parameters: true
                   property-file: buildresult.params
                   predefined-parameters: |
-                      STORE_LOGS=false
-                      PUBLISH_PATH=repository
+                      STORE_LOGS=true
+                      PUBLISH_PATH=$PUBLISH_PATH
                       REPORTED_JOB_NAME=$JOB_NAME
                       REPORTED_JOB_URL=$JOB_URL
                       REPORTED_BUILD_ID=$BUILD_ID
                   block: true
+      - shell:
+          !include-raw-escape builders/mos.vote.sh
     scm:
       - git:
           branches:
             - $GERRIT_BRANCH
           name: ''
-          refspec: refs/heads/$GERRIT_BRANCH
-          url: 'https://review.ci-cd-aut.local/openstack/{plugin_repo}'
-          choosing-strategy: default
+          refspec: $GERRIT_REFSPEC
+          url: '{gerrit-url}/$GERRIT_PROJECT'
+          choosing-strategy: gerrit
     triggers:
       - gerrit:
           projects:
-            - project-compare-type: 'PLAIN'
-              project-pattern: 'openstack/{plugin_repo}'
+            - project-compare-type: 'ANT'
+              project-pattern: 'fuel-plugin-**'
               branches:
                 - branch-compare-type: 'ANT'
                   branch-pattern: '**'
           trigger-on:
             - change-merged-event
-          readable-message: "True"
-          custom-url: '* $JOB_NAME http://mirror.ci-cd-aut.local/plugins/repository'
+#          silent: true
+          readable-message: true
           server-name: 'review.ci-cd-aut.local'
     publishers:
       - archive:
           artifacts: '*.rpm,*.txt'
       - email:
-          notify-every-unstable-build: "True"
+          notify-every-unstable-build: true
           recipients: '{email_to}'
