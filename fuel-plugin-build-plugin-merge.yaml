@@ -5,16 +5,13 @@
       numToKeep: 10
     node: new-builder
     properties:
-      - inject:
-          properties-content: |
-            GERRIT_USER=cicd-ci-jenkins
-            GERRIT_VOTE=1
+      - jenkins-gerrit-vote
     wrappers:
       -  jenkins
     parameters:
       - string:
           name: PUBLISH_PATCH
-          default: repository
+          default: '{stable_plugins_urls}'
       - string:
           name: GERRIT_REFSPEC
           default: refs/heads/master

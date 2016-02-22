@@ -8,10 +8,7 @@
       daysToKeep: 30
     node: install-tests
     properties:
-      - inject:
-          properties-content: |
-            GERRIT_USER=openstack-ci-packtest-deb
-            GERRIT_VOTE=1
+      - jenkins-gerrit-vote
     builders:
       - inject:
           properties-content: |

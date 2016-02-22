@@ -6,3 +6,10 @@
             - '87717344-0c5e-4d89-b8df-e174cec9e8ff'
 
 
+- property:
+    name: jenkins-gerrit-vote
+    properties:
+      - inject:
+          properties-content: |
+            GERRIT_USER=cicd-ci-jenkins
+            GERRIT_VOTE=1

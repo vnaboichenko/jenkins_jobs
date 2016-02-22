@@ -4,17 +4,14 @@
     logrotate:
       numToKeep: 10
     node: new-builder
-    properties:
-      - inject:
-          properties-content: |
-            GERRIT_USER=cicd-ci-jenkins
-            GERRIT_VOTE=1
+    properties: 
+      - jenkins-gerrit-vote
     wrappers:
       -  jenkins
     parameters:
       - string:
           name: PUBLISH_PATH
-          default: review/$JOB_NAME/BUILD-$BUILD_ID-CR-$GERRIT_CHANGE_NUMBER
+          default: '{temporary_plugins_urls}'
       - string:
           name: GERRIT_REFSPEC
           default: refs/heads/master
