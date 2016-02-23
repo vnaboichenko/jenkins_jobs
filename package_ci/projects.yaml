@@ -1,0 +1,177 @@
+- project:
+    name: '7.0.mos'
+    project-name: mos
+    release: 7.0
+    ops-release: 2015.1.0
+    build-node: 'new-builder'
+    publish-node: 'new-publisher'
+    install-node: 'install-tests'
+    packtest-build-node: 'package-testing'
+    daysToKeep: 10
+    scm-user: 'cicd-ci-jenkins'
+    scm-credentials-id: 'cb5e97c1-d571-4bc7-8084-59405bdbf8e9'
+    scm-repo: 'infra/obs'
+    #scm-branch: 'origin/feature/new-build-system'
+    scm-branch: 'origin/stable/7.0'
+    scm-ci-status-client-repo: 'infra/ci-status-client'
+    scm-ci-status-client-branch: 'origin/stable/7.0'
+    scm-basedir: ''
+    scm-ci-status-client-basedir: 'ci-status-client'
+    install-scm-repo: 'infra/ci-test-request'
+    install-scm-branch: 'origin/stable/7.0'
+    fuel-scm-branch: 'origin/stable/7.0'
+    ops-code-prj: 'openstack/**'
+    ops-spec-prj: 'openstack-build/**'
+    ops-branch: 'openstack-ci/fuel-7.0/2015.1.0'
+    ops-fuel-branch: 'openstack-ci/fuel/centos6/juno'
+    ops-security-branch: 'openstack-ci/fuel-7.0/2015.1.0-security-**'
+    ops-fuel-security-branch: 'openstack-ci/fuel/centos6/juno-security-**'
+    # original scheme should be:
+    #cluster-rpm-deps-code-project: '{project-name}/packages/{component-path-cluster}centos7/**'
+    #cluster-deb-deps-code-project: '{project-name}/packages/{component-path-cluster}trusty/**'
+    #fuel-rpm-deps-code-project: '{project-name}/packages/{component-path-fuel}centos6/**'
+    # changed in order to backward compatibility with current 7.0 source scheme
+    cluster-rpm-deps-code-project: 'packages/centos7/**'
+    cluster-deb-deps-code-project: 'packages/trusty/**'
+    fuel-rpm-deps-code-project: 'packages/centos6/**'
+    deps-branch: '7.0'
+    deps-security-branch: '7.0-security-**'
+    # don't put "origin" in fuel-branch variable
+    # fuel-branch MUST be in format: stable/version
+    fuel-branch: 'stable/7.0'
+    fuel-security-branch: 'stable/7.0-security-**'
+    mailto: 'fuel-build+ci-packaging@mirantis.com'
+    repo-host: 'mirror.ci-cd-aut.local'
+    #repo-host: 'perestroika-repo-tst.infra.mirantis.net'
+    repo-request-path-prefix: 'review/'
+    ##################################
+    # master-node
+    rpm-dist-fuel: 'centos6'
+    rpm-os-repo-path-fuel: 'mos-repos/centos/mos7.0-centos6-fuel/os'
+    rpm-proposed-repo-path-fuel: 'mos-repos/centos/mos7.0-centos6-fuel/proposed'
+    rpm-updates-repo-path-fuel: 'mos-repos/centos/mos7.0-centos6-fuel/updates'
+    rpm-security-repo-path-fuel: 'mos-repos/centos/mos7.0-centos6-fuel/security'
+    rpm-holdback-repo-path-fuel: 'mos-repos/centos/mos7.0-centos6-fuel/holdback'
+    # rpm environment
+    rpm-dist-env: 'centos7'
+    rpm-os-repo-path-env: 'mos-repos/centos/mos7.0-centos7/os'
+    rpm-proposed-repo-path-env: 'mos-repos/centos/mos7.0-centos7/proposed'
+    rpm-updates-repo-path-env: 'mos-repos/centos/mos7.0-centos7/updates'
+    rpm-security-repo-path-env: 'mos-repos/centos/mos7.0-centos7/security'
+    rpm-holdback-repo-path-env: 'mos-repos/centos/mos7.0-centos7/holdback'
+    # deb environment
+    deb-origin: 'Mirantis'
+    deb-dist-env: 'trusty'
+    deb-base-repo-path: 'mos-repos/ubuntu/7.0'
+    deb-base-dist-name: 'mos7.0'
+    deb-proposed-dist-name: 'mos7.0-proposed'
+    deb-updates-dist-name: 'mos7.0-updates'
+    deb-security-dist-name: 'mos7.0-security'
+    deb-holdback-dist-name: 'mos7.0-holdback'
+    ##################################
+    is-updates: true
+    is-disabled: ''
+    jobs:
+      - '7.0.mos-new.rpm'
+      - '7.0.mos-new.deb'
+      - '7.0.mos-new.publisher'
+      - '7.0.mos-new.fuel'
+      - '7.0.mos-new.install-rpm':
+          last_stage: false
+      - '7.0.mos-new.install-deb':
+          last_stage: false
+      - '7.0.mos-new.deploy-rpm':
+          last_stage: false
+      - '7.0.mos-new.deploy-deb':
+          last_stage: false
+      - '7.0.mos-new.deploy-tempest':
+          last_stage: false
+          is-disabled: true
+      - '7.0.mos-new.deploy-rally':
+          last_stage: false
+          is-disabled: true
+      - '7.0.mos-new.maintain'
+      - '7.0.mos-new.abort-package-testing'
+      - '7.0.mos-new.comment-abort'
+
+- job-group:
+    name: '7.0.mos-new.rpm'
+    jobs:
+      - '7.0.mos-new.build-rpm':
+          is-disabled: true
+          last_stage: true
+      - '7.0.mos-new.build-rpm-request':
+          is-disabled: true
+          last_stage: false
+      - '7.0.mos-new.build-rpm-deps':
+          is-disabled: true
+          last_stage: true
+      - '7.0.mos-new.build-rpm-deps-request':
+          is-disabled: true
+          last_stage: false
+      - '7.0.mos-new.build-rpm-security':
+          is-disabled: true
+          last_stage: true
+      - '7.0.mos-new.build-rpm-security-request':
+          is-disabled: true
+          last_stage: false
+      - '7.0.mos-new.build-rpm-deps-security':
+          is-disabled: true
+          last_stage: true
+      - '7.0.mos-new.build-rpm-deps-security-request':
+          is-disabled: true
+          last_stage: false
+
+- job-group:
+    name: '7.0.mos-new.deb'
+    jobs:
+      - '7.0.mos-new.build-deb':
+          last_stage: true
+      - '7.0.mos-new.build-deb-request':
+          last_stage: false
+      - '7.0.mos-new.build-deb-deps':
+          last_stage: true
+      - '7.0.mos-new.build-deb-deps-request':
+          last_stage: false
+      - '7.0.mos-new.build-deb-security':
+          last_stage: true
+      - '7.0.mos-new.build-deb-security-request':
+          last_stage: false
+      - '7.0.mos-new.build-deb-deps-security':
+          last_stage: true
+      - '7.0.mos-new.build-deb-deps-security-request':
+          last_stage: false
+
+- job-group:
+    name: '7.0.mos-new.fuel'
+    jobs:
+      - '7.0.mos-new.fuel.build-rpm':
+      - '7.0.mos-new.fuel.build-rpm-request':
+      - '7.0.mos-new.fuel.build-deb':
+      - '7.0.mos-new.fuel.build-deb-request':
+      - '7.0.mos-new.fuel.build-rpm-deps':
+          last_stage: true
+      - '7.0.mos-new.fuel.build-rpm-deps-request':
+          last_stage: false
+      - '7.0.mos-new.fuel.build-ops':
+          last_stage: true
+      - '7.0.mos-new.fuel.build-ops-request':
+          last_stage: false
+      - '7.0.mos-new.fuel.build-rpm-security':
+      - '7.0.mos-new.fuel.build-rpm-security-request':
+      - '7.0.mos-new.fuel.build-deb-security':
+      - '7.0.mos-new.fuel.build-deb-security-request':
+      - '7.0.mos-new.fuel.build-rpm-deps-security':
+          last_stage: true
+      - '7.0.mos-new.fuel.build-rpm-deps-security-request':
+          last_stage: false
+      - '7.0.mos-new.fuel.build-ops-security':
+          last_stage: true
+      - '7.0.mos-new.fuel.build-ops-security-request':
+          last_stage: false
+
+- job-group:
+    name: '7.0.mos-new.maintain'
+    jobs:
+      - '7.0.mos-new.maintain.starter'
+      - '7.0.mos-new.maintain.worker'

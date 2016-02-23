@@ -1,0 +1,75 @@
+- job-template:
+    name: '7.0.mos-new.deploy-rally'
+    project-type: freestyle
+    disabled: '{is-disabled}'
+    concurrent: true
+    node: '{packtest-build-node}'
+    logrotate:
+      daysToKeep: '{daysToKeep}'
+    wrappers:
+      - openstack-ci-packtest-deb
+      - timeout:
+          fail: true
+          timeout: 300
+    properties:
+      - inject:
+          properties-content: |
+            GERRIT_REVIEWER=openstack-ci-rally-deb
+            GERRIT_DEPLOY_VOTE=0
+            ENV_PREFIX=ubuntu
+            DISPLAY_NAME=Check deb package for installation and simple testing
+            REQUEST_TYPE=Trusty
+    parameters:
+      - packtest-rally
+      - iso-magnet-link-7.0
+    scm:
+      - fuel-infra:
+          scm-user: '{scm-user}'
+          scm-repo: '{install-scm-repo}'
+          scm-basedir: '{scm-basedir}'
+          scm-credentials-id: '{scm-credentials-id}'
+          scm-branch: '{install-scm-branch}'
+      - fuel-qa:
+          scm-branch: '{fuel-scm-branch}'
+      - fuel-infra:
+          scm-user: '{scm-user}'
+          scm-repo: '{scm-ci-status-client-repo}'
+          scm-basedir: '{scm-ci-status-client-basedir}'
+          scm-credentials-id: '{scm-credentials-id}'
+          scm-branch: '{scm-ci-status-client-branch}'
+    builders:
+      - shell:
+          !include-raw-escape builders/ci.status.report.start.sh
+      - shell:
+          !include-raw-escape builders/mos.reset.vote.sh
+      - shell:
+          !include-raw-escape builders/mos.rally.sh
+      - shell:
+          !include-raw-escape builders/mos.vote.sh
+    publishers:
+      - post-tasks:
+        - matches:
+            - log-text: Building
+              operator: AND
+          script:
+            !include-raw-escape builders/ci.status.report.stop.sh
+      - trigger-parameterized-builds:
+          - project: '7.0.mos-new.comment-abort'
+            predefined-parameters: |
+              UPSTREAM_JOB_NAME=$JOB_NAME
+              UPSTREAM_BUILD_URL=$BUILD_URL
+              GERRIT_USER=$GERRIT_REVIEWER
+              GERRIT_HOST=$GERRIT_HOST
+              GERRIT_PORT=$GERRIT_PORT
+              GERRIT_CHANGE_NUMBER=$GERRIT_CHANGE_NUMBER
+              GERRIT_PATCHSET_NUMBER=$GERRIT_PATCHSET_NUMBER
+      - archive:
+          artifacts: 'fuel-qa/logs/*'
+          allow-empty: true
+      - junit:
+          results: 'fuel-qa/logs/*.xml'
+      - performance:
+          failed-threshold: 0
+          unstable-threshold: 0
+          report:
+             - junit: 'fuel-qa/logs/*.xml'

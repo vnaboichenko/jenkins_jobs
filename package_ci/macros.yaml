@@ -1,0 +1,411 @@
+########################################################################
+# Section: Wrappers
+########################################################################
+
+- wrapper:
+    name: jenkins
+    wrappers:
+      - ssh-agent-credentials:
+          users:
+            - '98ec5f09-5ff1-476a-b1da-69e87186eaea'
+
+- wrapper:
+    name: openstack-ci-jenkins
+    wrappers:
+      - ssh-agent-credentials:
+          users:
+            - '87717344-0c5e-4d89-b8df-e174cec9e8ff'
+
+- wrapper:
+    name: cicd-ci-jenkins
+    wrappers:
+      - ssh-agent-credentials:
+          users:
+            - '87717344-0c5e-4d89-b8df-e174cec9e8ff'
+            - '817edea8-b597-4a6e-9aeb-bad57b109e66'
+            - '35fc8f47-a728-4d5a-bfeb-9338089f31fa'
+
+- wrapper:
+    name: ci-build-rpm
+    wrappers:
+      - ssh-agent-credentials:
+          users:
+            - '87717344-0c5e-4d89-b8df-e174cec9e8ff'
+            - '9654daf3-36d4-4998-909e-c4085330b8e7'
+            - '35fc8f47-a728-4d5a-bfeb-9338089f31fa'
+
+- wrapper:
+    name: vm-check-install-rpm
+    wrappers:
+      - ssh-agent-credentials:
+          users:
+            - '87717344-0c5e-4d89-b8df-e174cec9e8ff'
+            - '06bc7ed4-3174-4c49-bb54-63a301874199'
+            - 'e074d15f-e006-4435-8836-c792c431a270'
+
+- wrapper:
+    name: vm-check-install-deb
+    wrappers:
+      - ssh-agent-credentials:
+          users:
+            - '87717344-0c5e-4d89-b8df-e174cec9e8ff'
+            - '11acbe7e-c816-478d-b484-04adf29f4888'
+            - 'e074d15f-e006-4435-8836-c792c431a270'
+
+- wrapper:
+    name: vm-check-install-trusty
+    wrappers:
+      - ssh-agent-credentials:
+          users:
+            - '87717344-0c5e-4d89-b8df-e174cec9e8ff'
+            - '11acbe7e-c816-478d-b484-04adf29f4888'
+            - '9b8a6644-23be-4e82-9a2f-a26c62df8955'
+
+- wrapper:
+    name: openstack-ci-packtest-rpm
+    wrappers:
+      - ssh-agent-credentials:
+          users:
+            - '1c17f649-550f-440e-a0ad-994de8417e67'
+            - 'efa71805-f1ea-4ad4-9f26-32277f8bcc7a'
+
+- wrapper:
+    name: openstack-ci-packtest-deb
+    wrappers:
+      - ssh-agent-credentials:
+          users:
+            - '87717344-0c5e-4d89-b8df-e174cec9e8ff'
+
+- wrapper:
+    name: osci-jenkins-reporter
+    wrappers:
+      - ssh-agent-credentials:
+          users:
+            - '35fc8f47-a728-4d5a-bfeb-9338089f31fa'
+
+- wrapper:
+    name: comment-abort-users
+    wrappers:
+      - ssh-agent-credentials:
+          users:
+            - '4c78c2d6-a0d6-49b7-a398-d728a1b6a85c'
+            - 'efa71805-f1ea-4ad4-9f26-32277f8bcc7a'
+            - '11acbe7e-c816-478d-b484-04adf29f4888'
+            - '06bc7ed4-3174-4c49-bb54-63a301874199'
+
+
+########################################################################
+# Section: Triggers
+########################################################################
+
+- trigger:
+    name: fuel-infra-request
+    triggers:
+      - gerrit:
+          trigger-on:
+            - patchset-created-event
+          projects:
+            - project-compare-type: 'ANT'
+              project-pattern: '{spec-project}'
+              branches:
+                - branch-compare-type: 'ANT'
+                  branch-pattern: '{branch}'
+              file-paths:
+                - compare-type: 'ANT'
+                  pattern: 'tests/**'
+                - compare-type: 'ANT'
+                  pattern: '{files}'
+            - project-compare-type: 'ANT'
+              project-pattern: '{code-project}'
+              branches:
+                - branch-compare-type: 'ANT'
+                  branch-pattern: '{branch}'
+          server-name: fuel-infra
+          silent: true
+
+- trigger:
+    name: fuel-infra-deps-request
+    triggers:
+      - gerrit:
+          trigger-on:
+            - patchset-created-event
+          projects:
+            - project-compare-type: 'ANT'
+              project-pattern: '{code-project}'
+              branches:
+                - branch-compare-type: 'ANT'
+                  branch-pattern: '{branch}'
+          server-name: fuel-infra
+          silent: true
+
+- trigger:
+    name: fuel-infra-submit
+    triggers:
+      - gerrit:
+          trigger-on:
+            - change-merged-event
+          projects:
+            - project-compare-type: 'ANT'
+              project-pattern: '{spec-project}'
+              branches:
+                - branch-compare-type: 'ANT'
+                  branch-pattern: '{branch}'
+              file-paths:
+                - compare-type: 'ANT'
+                  pattern: '{files}'
+            - project-compare-type: 'ANT'
+              project-pattern: '{code-project}'
+              branches:
+                - branch-compare-type: 'ANT'
+                  branch-pattern: '{branch}'
+          server-name: fuel-infra
+          silent: true
+
+- trigger:
+    name: fuel-infra-deps-submit
+    triggers:
+      - gerrit:
+          trigger-on:
+            - change-merged-event
+          projects:
+            - project-compare-type: 'ANT'
+              project-pattern: '{code-project}'
+              branches:
+                - branch-compare-type: 'ANT'
+                  branch-pattern: '{branch}'
+          server-name: fuel-infra
+          silent: true
+
+- trigger:
+    name: openstack-fuel-request
+    triggers:
+      - gerrit:
+          trigger-on:
+            - patchset-created-event
+          projects:
+            - project-compare-type: 'ANT'
+              project-pattern: '{spec-project}'
+              branches:
+                - branch-compare-type: 'ANT'
+                  branch-pattern: '{branch}'
+              file-paths:
+                - compare-type: 'ANT'
+                  pattern: '{files}'
+          silent: true
+          server-name: review.openstack.org
+
+- trigger:
+    name: openstack-fuel-submit
+    triggers:
+      - gerrit:
+          trigger-on:
+            - change-merged-event
+          projects:
+            - project-compare-type: 'ANT'
+              project-pattern: '{spec-project}'
+              branches:
+                - branch-compare-type: 'ANT'
+                  branch-pattern: '{branch}'
+              file-paths:
+                - compare-type: 'ANT'
+                  pattern: '{files}'
+          silent: true
+          server-name: review.openstack.org
+
+
+########################################################################
+# Section: SCM
+########################################################################
+
+- scm:
+    name: fuel-infra
+    scm:
+      - git:
+          url: 'ssh://{scm-user}@review.ci-cd-aut.local:29418/{scm-repo}.git'
+          basedir: '{scm-basedir}'
+          credentials-id: '{scm-credentials-id}'
+          skip-tag: true
+          branches:
+            - '{scm-branch}'
+          wipe-workspace: false
+
+- scm:
+    name: fuel-qa
+    scm:
+      - git:
+#          url: 'http://git.openstack.org/openstack/fuel-qa.git'
+          url: 'https://admin@review.ci-cd-aut.local/fuel-qa'
+          basedir: 'fuel-qa'
+          branches:
+            - '{scm-branch}'
+          wipe-workspace: false
+
+
+########################################################################
+## Section: Parameters
+########################################################################
+
+- parameter:
+    name: openstack-build
+    parameters:
+      - string:
+          name: URL
+          default: 'ssh://openstack-ci-jenkins@review.ci-cd-aut.local:29418/'
+      - string:
+          name: PROJECTNAME
+          default: '{prjprefix}fuel-{version-id}{prjsuffix}'
+      - string:
+          name: PACKAGENAME
+          default: ''
+      - string:
+          name: SOURCEBRANCH
+          default: 'openstack-ci/fuel-{version-id}/{openstack-id}'
+      - string:
+          name: SOURCECHANGEID
+          default: ''
+      - string:
+          name: SPECBRANCH
+          default: 'openstack-ci/fuel-{version-id}/{openstack-id}'
+      - string:
+          name: SPECCHANGEID
+          default: ''
+      - string:
+          name: PRJPREFIX
+          default: '{prjprefix}'
+      - string:
+          name: PRJSUFFIX
+          default: '{prjsuffix}'
+      - bool:
+          name: UPDATES
+          default: '{updates}'
+      - bool:
+          name: LAST_STAGE
+          default: '{last_stage}'
+
+- parameter:
+    name: dependencies-build
+    parameters:
+      - string:
+          name: URL
+          default: 'ssh://openstack-ci-jenkins@review.ci-cd-aut.local:29418/'
+      - string:
+          name: PROJECTNAME
+          default: '{prjprefix}fuel-{version-id}{prjsuffix}'
+      - string:
+          name: PACKAGENAME
+          default: ''
+      - string:
+          name: SOURCEBRANCH
+          default: '{version-id}'
+      - string:
+          name: SOURCECHANGEID
+          default: ''
+      - string:
+          name: PRJPREFIX
+          default: '{prjprefix}'
+      - string:
+          name: PRJSUFFIX
+          default: '{prjsuffix}'
+      - bool:
+          name: UPDATES
+          default: '{updates}'
+      - bool:
+          name: LAST_STAGE
+          default: '{last_stage}'
+
+- parameter:
+    name: packtest
+    parameters:
+      - string:
+          name: DISPLAY_NAME
+          default: 'Check package for installation in environment'
+      - string:
+          name: TEST_GROUP
+          default: 'smoke_neutron'
+      - string:
+          name: KEEP_BEFORE
+          default: 'yes'
+      - string:
+          name: KEEP_AFTER
+          default: 'no'
+      - string:
+          name: MAKE_SNAPSHOT
+          default: 'True'
+
+- parameter:
+    name: packtest-tempest
+    parameters:
+      - string:
+          name: DISPLAY_NAME
+          default: 'Check package for installation in environment'
+      - string:
+          name: TEST_GROUP
+          default: 'package_tempest'
+      - string:
+          name: DISABLE_SSL
+          default: 'False'
+      - string:
+          name: KEEP_BEFORE
+          default: 'yes'
+      - string:
+          name: KEEP_AFTER
+          default: 'no'
+
+- parameter:
+    name: packtest-rally
+    parameters:
+      - string:
+          name: DISPLAY_NAME
+          default: 'Check package for installation in environment'
+      - string:
+          name: TEST_GROUP
+          default: 'package_rally'
+      - string:
+          name: DISABLE_SSL
+          default: 'False'
+      - string:
+          name: KEEP_BEFORE
+          default: 'yes'
+      - string:
+          name: KEEP_AFTER
+          default: 'no'
+      - string:
+          name: RALLY_TAGS
+          default: 'all'
+          description: 'Comma-separated tags for rally scenarios correspondent to .json files of scenarios. all means running all.json scenarion.
+Example: "nova,keystone,cinder".'
+      - string:
+          name: MIRROR_ADDRESS
+          default: 'http://mirror.ci-cd-aut.local/'
+          description: 'HTTP address of a mirror where rally.img file can be downloaded because on MOS 7.0 we cannot pull image from docker hub.'
+
+
+- parameter:
+    name: iso-magnet-link-6.1
+    parameters:
+      - string:
+          name: ISO_MAGNET_LINK
+          default: |
+            magnet:?xt=urn:btih:9d59953417e0c2608f8fa0ffe43ceac00967708f&dn=MirantisOpenStack-6.1.iso&tr=http%3A%2F%2Ftracker01-bud.infra.mirantis.net%3A8080%2Fannounce&tr=http%3A%2F%2Ftracker01-scc.infra.mirantis.net%3A8080%2Fannounce&tr=http%3A%2F%2Ftracker01-msk.infra.mirantis.net%3A8080%2Fannounce&ws=http%3A%2F%2Fvault.infra.mirantis.net%2FMirantisOpenStack-6.1.iso
+
+- parameter:
+    name: iso-magnet-link-7.0
+    parameters:
+      - string:
+          name: ISO_MAGNET_LINK
+          default: |
+            magnet:?xt=urn:btih:21b4d46c9f1cec02e336b1f9771d4f7c27ec724b&dn=MirantisOpenStack-7.0.iso&tr=http%3A%2F%2Ftracker01-bud.infra.mirantis.net%3A8080%2Fannounce&tr=http%3A%2F%2Ftracker01-scc.infra.mirantis.net%3A8080%2Fannounce&tr=http%3A%2F%2Ftracker01-msk.infra.mirantis.net%3A8080%2Fannounce&ws=http%3A%2F%2Fvault.infra.mirantis.net%2FMirantisOpenStack-7.0.iso
+
+
+########################################################################
+## Section: Publishers
+########################################################################
+
+- publisher:
+    name: pkgname-as-desc
+    publishers:
+      - description-setter:
+          regexp: '(PACKAGENAME=)(.+)'
+          regexp-for-failed: '(PACKAGENAME=)(.+)'
+          description: '\2'
+          description-for-failed: '\2'

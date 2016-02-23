@@ -1,17 +1,17 @@
 - job-template:
-    name: 'fuel-plugin-build-plugin-merge'
+    name: 'fuel-build-plugin-request'
     description: '<a href=https://github.com/openstack/$GERRIT_PROJECT>Build  plugin from fuel-plugins projec.</a>'
     logrotate:
       numToKeep: 10
     node: new-builder
-    properties:
+    properties: 
       - jenkins-gerrit-vote
     wrappers:
       -  jenkins
     parameters:
       - string:
-          name: PUBLISH_PATCH
-          default: '{stable_plugins_urls}'
+          name: PUBLISH_PATH
+          default: '{temporary_plugins_urls}'
       - string:
           name: GERRIT_REFSPEC
           default: refs/heads/master
@@ -19,6 +19,8 @@
           name: GERRIT_CHANGE_NUMBER
           default: triggered-manually
     builders:
+      - shell:
+          !include-raw-escape builders/mos.reset.vote.sh
       - shell:
           !include-raw-escape './builders/build-plugin.sh'
       - inject:
@@ -41,6 +43,13 @@
                       REPORTED_JOB_URL=$JOB_URL
                       REPORTED_BUILD_ID=$BUILD_ID
                   block: true
+      - trigger-builds:
+        - project: 'fuel-plugin-system-tests'
+          current-parameters: true
+          property-file: setenvfile
+          predefined-parameters: |
+              FUEL_QA_COMMIT=stable/7.0
+              PLUGINS={plugin_mirror}/review/$JOB_NAME/BUILD-$BUILD_ID-CR-$GERRIT_CHANGE_NUMBER/$RPM_NAME
       - shell:
           !include-raw-escape builders/mos.vote.sh
     scm:
@@ -60,10 +69,13 @@
                 - branch-compare-type: 'ANT'
                   branch-pattern: '**'
           trigger-on:
-            - change-merged-event
+            - patchset-created-event
+            - comment-added-contains-event:
+                comment-contains-value: 'recheck'
 #          silent: true
           readable-message: true
-          server-name: 'review.ci-cd-aut.local'
+          custom-url: '* $JOB_NAME http://mirror.ci-cd-aut.local/plugins/review/$JOB_NAME/BUILD-$BUILD_ID-CR-$GERRIT_CHANGE_NUMBER'
+          server-name: '{server-name}'
     publishers:
       - archive:
           artifacts: '*.rpm,*.txt'

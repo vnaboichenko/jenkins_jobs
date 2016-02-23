@@ -2,7 +2,8 @@
     name: build
     email_to: ''
     plugin_mirror: http://mirror.ci-cd-aut.local/plugins
-    gerrit-url: https://review.ci-cd-aut.local
+    gerrit-url: http://review.ci-cd-aut.local
+    server-name: review.ci-cd-aut.local
     temporary_plugins_urls: review/$JOB_NAME/BUILD-$BUILD_ID-CR-$GERRIT_CHANGE_NUMBER
     stable_plugins_urls: repository
     tag: 'refs/tags/1.0.0'
@@ -11,13 +12,10 @@
     zabbix_test_group: deploy_zabbix_ha
     zabbix_plugin_repo: fuel-plugin-external-zabbix
 
-
-
-
     jobs:
-      - 'fuel-plugin-build-plugin-request'
       - 'fuel-plugins.publish_plugins'
       - 'fuel-plugin-system-tests'
-      - 'fuel-plugin-build-plugin-merge'
+      - 'fuel-build-plugin-merge'
+      - 'fuel-build-plugin-request'
 
 
