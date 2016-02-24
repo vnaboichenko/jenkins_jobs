@@ -104,6 +104,7 @@ export OPENSTACK_RELEASE="${OPENSTACK_RELEASE}"
 
 echo "Description string: ${TEST_GROUP} on ${NODE_NAME}: ${ENV_NAME}"
 
+
 if sh -x "utils/jenkins/system_tests.sh" -k -t test -w "${WORKSPACE}" -e $ENV_NAME -V "${VENV_PATH}" -j "${JOB_NAME}" -o --group="${TEST_GROUP}" -i ${ISO_PATH}
 then 
   RESULT=0

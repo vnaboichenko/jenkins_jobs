@@ -10,7 +10,7 @@
       -  jenkins
     parameters:
       - string:
-          name: PUBLISH_PATCH
+          name: PUBLISH_PATH
           default: '{stable_plugins_urls}'
       - string:
           name: GERRIT_REFSPEC

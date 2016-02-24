@@ -72,8 +72,8 @@ if [ -n "${CORR_CHANGE_NUMBER}" ] ; then
 fi
 
 if [ ${VOTE} -gt 0 ] ; then
-GERRIT_MESSAGE="* http://mirror.ci-cd-aut.local/plugins/${PUBLISH_PATH}"
-GERRIT_CMD="gerrit review ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER} '--message=${GERRIT_MESSAGE} '"
+GERRIT_MESSAGE="* You can download plugin at http://mirror.ci-cd-aut.local/plugins/${PUBLISH_PATH}"
+GERRIT_CMD="gerrit review ${GERRIT_PATCHSET_REVISION} '--message=${GERRIT_MESSAGE} '"
 vote
 fi
 
