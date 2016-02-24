@@ -11,7 +11,7 @@
           properties-content: |
             ADMIN_NODE_MEMORY=3072
             SLAVE_NODE_MEMORY=3072
-            GERRIT_USER=cicd-ci-jenkins
+            GERRIT_USER=openstack-ci-plugins
             GERRIT_VOTE=1
       - inject:
           properties-content: $ADDITIONAL_PARAMETERS
