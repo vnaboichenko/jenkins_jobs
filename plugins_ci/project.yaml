@@ -1,16 +1,15 @@
 - project:
     name: build
     email_to: ''
-    plugin_mirror: http://mirror.ci-cd-aut.local/plugins
-    gerrit-url: http://review.ci-cd-aut.local
+    mirror-host: 'http://mirror.ci-cd-aut.local'
+    gerrit-url: 'http://review.ci-cd-aut.local'
     temporary_plugins_urls: review/$JOB_NAME/BUILD-$BUILD_ID-CR-$GERRIT_CHANGE_NUMBER
     stable_plugins_urls: repository
-    tag: 'refs/tags/1.0.0'
-    lbaas_test_group: deploy_neutron_lbaas_simple
-    lbaas_plugin_repo: fuel-plugin-neutron-lbaas
-    zabbix_test_group: deploy_zabbix_ha
-    zabbix_plugin_repo: fuel-plugin-external-zabbix
-
+    plugin_mirror: '{mirror-host}/plugins'
+    deb-base-repo-path: 'mos-repos/ubuntu/7.0'
+    deb-proposed-dist-name: 'mos7.0-proposed'
+    extra-deb-repos: 'deb {mirror-host}/{deb-base-repo-path} {deb-proposed-dist-name} main'
+    extra-deb-repos-priority: '1060'
     jobs:
       - 'fuel-plugins.publish_plugins'
       - 'fuel-plugin-system-tests'

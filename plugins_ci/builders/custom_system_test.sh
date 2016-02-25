@@ -51,7 +51,12 @@ if [[ ! "${MIRROR_UBUNTU}" ]]; then
             UBUNTU_MIRROR_URL="${MIRROR_HOST}${UBUNTU_MIRROR_ID}/"
     esac
 
-    export MIRROR_UBUNTU="deb ${UBUNTU_MIRROR_URL} trusty main universe multiverse|deb ${UBUNTU_MIRROR_URL} trusty-updates main universe multiverse|deb ${UBUNTU_MIRROR_URL} trusty-security main universe multiverse|deb ${UBUNTU_MIRROR_URL} trusty-proposed main universe multiverse"
+#    export MIRROR_UBUNTU="deb ${UBUNTU_MIRROR_URL} trusty main universe multiverse|deb ${UBUNTU_MIRROR_URL} trusty-updates main universe multiverse|deb ${UBUNTU_MIRROR_URL} trusty-security main universe multiverse|deb ${UBUNTU_MIRROR_URL} trusty-proposed main universe multiverse"
+
+
+#variable that allow to replace extra mirrors
+export REPLACE_DEFAULT_REPOS_ONLY_ONCE=false
+
 fi
 
 if [[ "${NETWORK_MODE}" == "Neutron/VLAN" ]]; then

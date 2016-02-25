@@ -1,7 +1,7 @@
-- job:
+- job-template:
     name: fuel-plugin-system-tests
     description:
-      !include-raw './descriptions/custom_system_test'
+      !include-raw-escape './descriptions/custom_system_test'
     logrotate:
       artifactDaysToKeep: 11
       daysToKeep: 30
@@ -16,15 +16,15 @@
       - inject:
           properties-content: $ADDITIONAL_PARAMETERS
       - shell:
-          !include-raw './builders/wget_plugins.sh'
+          !include-raw-escape './builders/wget_plugins.sh'
       - shell:
-          !include-raw './builders/map-plugin-path.sh'
+          !include-raw-escape './builders/map-plugin-path.sh'
       - inject:
           properties-file: plugins.parameters
       - shell:
-          !include-raw './builders/custom_system_test.sh'
+          !include-raw-escape './builders/custom_system_test.sh'
       - shell:
-          !include-raw './builders/mos.vote.sh'
+          !include-raw-escape './builders/mos.vote.sh'
     parameters:
       - string:
           name: MAGNET_LINK
@@ -92,6 +92,12 @@
             Specify the name of a custom test group which
             is not present on the TEST_GROUP list. This will override
             the TEST_GROUP variable value.
+      - string:
+          name: EXTRA_DEB_REPOS
+          default: '{extra-deb-repos}'
+      - string:
+          name: EXTRA_DEB_REPOS_PRIORITY
+          default: '{extra-deb-repos-priority}'
       - choice:
           name: NETWORK_MODE
           choices:
@@ -144,7 +150,7 @@
 
     properties:
       - heavy-job:
-          weight: 2
+          weight: 1
       - throttle:
           enabled: true
           max-per-node: 1
