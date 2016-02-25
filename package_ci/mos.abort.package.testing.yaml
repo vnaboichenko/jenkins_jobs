@@ -48,7 +48,6 @@
               branches:
                 - branch-compare-type: 'PLAIN'
                   branch-pattern: '{deps-branch}'
-          server-name: fuel-infra
           silent: true
     builders:
       - shell:

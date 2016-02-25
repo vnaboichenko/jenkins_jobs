@@ -75,7 +75,6 @@
 #          silent: true
           readable-message: true
           custom-url: '* $JOB_NAME http://mirror.ci-cd-aut.local/plugins/review/$JOB_NAME/BUILD-$BUILD_ID-CR-$GERRIT_CHANGE_NUMBER'
-          server-name: '{server-name}'
     publishers:
       - archive:
           artifacts: '*.rpm,*.txt'

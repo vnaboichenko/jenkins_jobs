@@ -63,7 +63,6 @@
             - change-merged-event
 #          silent: true
           readable-message: true
-          server-name: '{server-name}'
     publishers:
       - archive:
           artifacts: '*.rpm,*.txt'

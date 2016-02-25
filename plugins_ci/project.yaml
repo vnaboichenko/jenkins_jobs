@@ -3,7 +3,6 @@
     email_to: ''
     plugin_mirror: http://mirror.ci-cd-aut.local/plugins
     gerrit-url: http://review.ci-cd-aut.local
-    server-name: review.ci-cd-aut.local
     temporary_plugins_urls: review/$JOB_NAME/BUILD-$BUILD_ID-CR-$GERRIT_CHANGE_NUMBER
     stable_plugins_urls: repository
     tag: 'refs/tags/1.0.0'
